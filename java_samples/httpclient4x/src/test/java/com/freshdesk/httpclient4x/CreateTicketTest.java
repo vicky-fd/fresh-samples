@@ -18,7 +18,7 @@ public class CreateTicketTest {
         String apiToken = APITokenEndpoint.apiToken;
         String apiEndpoint = APITokenEndpoint.apiEndpoint;
         CreateTicket instance = new CreateTicket();
-        int expResult = 200;
+        int expResult = 201;
         int result = instance.createTicket(apiToken, apiEndpoint);
         assertEquals(expResult, result);
     }

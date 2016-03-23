@@ -43,7 +43,7 @@ public class CreateTicketWithAttachments {
         final RequestConfig.Builder rcBuilder = RequestConfig.custom();
         
         // URL object from API endpoint:
-        URL url = new URL(apiEndpoint + "/helpdesk/tickets.json");
+        URL url = new URL(apiEndpoint + "/api/v2/tickets");
         final String urlHost = url.getHost();
         final int urlPort = url.getPort();
         final String urlProtocol = url.getProtocol();
@@ -68,16 +68,18 @@ public class CreateTicketWithAttachments {
         MultipartEntityBuilder meb = MultipartEntityBuilder.create();
         meb.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
         
-        meb.addTextBody("helpdesk_ticket[email]", "example@example.com");
-        meb.addTextBody("helpdesk_ticket[subject]", "Ticket title");
-        meb.addTextBody("helpdesk_ticket[description]", "Ticket description.");
+        meb.addTextBody("email", "email@yourdomain.com");
+        meb.addTextBody("subject", "Ticket title");
+        meb.addTextBody("description", "Ticket description.");
+        meb.addTextBody("status", "2");
+        meb.addTextBody("priority", "1");
         
         File attach1 = new File("src/test/resources/a.txt");
         File attach2 = new File("src/test/resources/b.txt");
         
-        meb.addBinaryBody("helpdesk_ticket[attachments][][resource]", attach1,
+        meb.addBinaryBody("attachments[]", attach1,
                 ContentType.TEXT_PLAIN.withCharset("utf-8"), attach1.getName());
-        meb.addBinaryBody("helpdesk_ticket[attachments][][resource]", attach2,
+        meb.addBinaryBody("attachments[]", attach2,
                 ContentType.TEXT_PLAIN.withCharset("utf-8"), attach2.getName());
         reqBuilder.setEntity(meb.build());
         
@@ -98,9 +100,17 @@ public class CreateTicketWithAttachments {
         while((line=br.readLine())!=null) {
             sb.append(line);
         }
+        int response_status = response.getStatusLine().getStatusCode();
+        System.out.println("Response Status: "+ response_status);
         System.out.println("Body:\n");
         System.out.println(sb.toString());
+        if(response_status == 201) {
+            System.out.println("\nLocation Header: " + response.getFirstHeader("location").getValue());
+        }
+        else{
+            System.out.println("\nX-Request-Id: " + response.getFirstHeader("x-request-id").getValue());
+        }
         
-        return response.getStatusLine().getStatusCode();
+        return response_status;
     }
 }

@@ -41,7 +41,7 @@ public class CreateTicket {
         final RequestConfig.Builder rcBuilder = RequestConfig.custom();
         
         // URL object from API endpoint:
-        URL url = new URL(apiEndpoint + "/helpdesk/tickets.json");
+        URL url = new URL(apiEndpoint + "/api/v2/tickets");
         final String urlHost = url.getHost();
         final int urlPort = url.getPort();
         final String urlProtocol = url.getProtocol();
@@ -63,7 +63,7 @@ public class CreateTicket {
         hccContext.setAuthCache(authCache);
         
         // Body:
-        final String jsonBody = "{\"helpdesk_ticket\":{\"description\":\"Some details on the issue ...\",\"subject\":\"Support needed..\",\"email\":\"tom@outerspace.com\",\"priority\":1,\"status\":2},\"cc_emails\":\"ram@freshdesk.com,diana@freshdesk.com\"}";
+        final String jsonBody = "{\"description\":\"Some details on the issue ...\",\"subject\":\"Support needed..\",\"email\":\"email@yourdomain.com\",\"priority\":1,\"status\":2}";
         HttpEntity entity = new StringEntity(jsonBody,
                 ContentType.APPLICATION_JSON.withCharset(Charset.forName("utf-8")));
         reqBuilder.setEntity(entity);
@@ -85,9 +85,17 @@ public class CreateTicket {
         while((line=br.readLine())!=null) {
             sb.append(line);
         }
+        int response_status = response.getStatusLine().getStatusCode();
+        System.out.println("Response Status: "+ response_status);
         System.out.println("Body:\n");
         System.out.println(sb.toString());
+        if(response_status == 201) {
+            System.out.println("\nLocation Header: " + response.getFirstHeader("location").getValue());
+        }
+        else{
+            System.out.println("\nX-Request-Id: " + response.getFirstHeader("x-request-id").getValue());
+        }
         
-        return response.getStatusLine().getStatusCode();
+        return response_status;
     }
 }

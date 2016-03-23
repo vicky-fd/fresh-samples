@@ -18,7 +18,7 @@ public class CreateTicketWithAttachmentsTest {
         String apiToken = APITokenEndpoint.apiToken;
         String apiEndpoint = APITokenEndpoint.apiEndpoint;
         CreateTicketWithAttachments instance = new CreateTicketWithAttachments();
-        int expResult = 200;
+        int expResult = 201;
         int result = instance.createTicketWithAttachments(apiToken, apiEndpoint);
         assertEquals(expResult, result);
     }
